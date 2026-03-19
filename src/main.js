@@ -1,6 +1,7 @@
 import "./style.css";
 import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
+import {TransformControls} from "three/addons/controls/TransformControls.js"
 
 const scene = new THREE.Scene();
 
@@ -15,6 +16,12 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
 
+const transformControls = new TransformControls(camera, renderer.domElement);
+
+scene.add(transformControls);
+scene.add(transformControls.getHelper());
+
+transformControls.addEventListener("dragging-changed", function(event) {controls.enabled = !event.value;});
 
 
 const roomGeo = new THREE.BoxGeometry(10, 5, 10);
@@ -51,6 +58,9 @@ for (let i = 0; i < 12; i++) {
 }
 
 scene.add(cabinetGroup);
+
+
+transformControls.attach(cabinetGroup.children[1]);
 
 
 
