@@ -56,16 +56,21 @@ cabinetGroup.position.z = -4.5;
 
 const cabinetGeo = new THREE.BoxGeometry(3, 4, 1);
 const cabinetMat = new THREE.MeshBasicMaterial({color: 0xffaa00, wireframe: true});
-const cabinet = new THREE.Mesh(cabinetGeo, cabinetMat);
-cabinet.name = "armoireFinale";
+const distinctCabinetMat = cabinetMat.clone();
+
+const cabinet = new THREE.Mesh(cabinetGeo, distinctCabinetMat);
+cabinet.name = "armoireFinale"; 
 cabinetGroup.add(cabinet);
 
 const objGeo = new THREE.SphereGeometry(0.2, 8, 8);
-const objMat = new THREE.MeshBasicMaterial({color: 0xff0000});
+const baseObjMat = new THREE.MeshBasicMaterial({color: 0xff0000});
 
 for (let i = 0; i < 12; i++) {
-  const obj = new THREE.Mesh(objGeo, objMat);
+  const distinctMat = baseObjMat.clone();
+  
+  const obj = new THREE.Mesh(objGeo, distinctMat);
   obj.name = "referenceFilm";
+
   obj.position.z = 0;
   obj.position.x = (Math.random() - 0.5) * 2.5;
   obj.position.y = (Math.random() - 0.5) * 3.5;
@@ -78,44 +83,40 @@ scene.add(cabinetGroup);
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2(); 
 
-window.addEventListener('click', (event) => {
-  if (estEnTrainDeGlisser) return;
-  
+window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+});
 
+window.addEventListener('click', (event) => {
+  raycaster.setFromCamera(mouse, camera);
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObjects(cabinetGroup.children);
-
   const objetTrouve = intersects.find((touche) => touche.object.name === "referenceFilm");
+  const armoireTrouvee = intersects.find((touche) => touche.object.name === "armoireFinale");
 
   if (objetTrouve) {
-  
     const positionAbsolue = new THREE.Vector3();
-
     objetTrouve.object.getWorldPosition(positionAbsolue);
+    gsap.to(controls.target, { x: positionAbsolue.x, y: positionAbsolue.y, z: positionAbsolue.z, duration: 1, ease: "power2.out" });
+    gsap.to(camera.position, { x: positionAbsolue.x, y: positionAbsolue.y, z: positionAbsolue.z + 1.5, duration: 1.5, ease: "power2.inOut" });
+  } 
 
-    gsap.to(controls.target, {
-      x: positionAbsolue.x,
-      y: positionAbsolue.y,
-      z: positionAbsolue.z,
-      duration: 1, 
-      ease: "power2.out" 
-    });
+  else if (armoireTrouvee) {
+    const distanceCamera = camera.position.distanceTo(cabinetGroup.position);
 
-    gsap.to(camera.position, {
-      x: positionAbsolue.x,
-      y: positionAbsolue.y,
-      z: positionAbsolue.z + 1.5, 
-      duration: 1.5,
-      ease: "power2.inOut"
-    });
+    if (distanceCamera > 6) {
+      console.log("BRAVO ! Armoire trouvée.");
 
-    //transformControls.attach(objetTrouve.object); 
-    
-  } else {
-    transformControls.detach();
+      armoireTrouvee.object.material.color.setHex(0x00ff00);
+
+      armoireTrouvee.object.name = "armoireTrouvee_Fini"; 
+    } else {
+
+    }
   }
 });
 
@@ -157,16 +158,51 @@ boutonPlay.addEventListener('click', () => {
 
 
 
+let objetActuellementSurvole = null;
+const couleurHover = 0x00aaff;
+
 
 let cameraEnMouvement = false;
 
-function animate(){
+function animate() {
   requestAnimationFrame(animate);
-  
+
   if (!cameraEnMouvement) {
     controls.update();
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(cabinetGroup.children);
+
+    const validHoverTarget = intersects.find(t => 
+        t.object.name === "referenceFilm" || t.object.name === "armoireFinale"
+    );
+
+    if (validHoverTarget) {
+      const nouvelObjet = validHoverTarget.object;
+
+      if (objetActuellementSurvole !== nouvelObjet) {
+
+        if (objetActuellementSurvole) {
+          objetActuellementSurvole.material.color.setHex(objetActuellementSurvole.currentHex);
+        }
+
+        objetActuellementSurvole = nouvelObjet;
+        objetActuellementSurvole.currentHex = objetActuellementSurvole.material.color.getHex(); 
+        objetActuellementSurvole.material.color.setHex(couleurHover); 
+
+        document.body.style.cursor = 'pointer';
+      }
+    } else {
+
+      if (objetActuellementSurvole) {
+        objetActuellementSurvole.material.color.setHex(objetActuellementSurvole.currentHex);
+      }
+      objetActuellementSurvole = null;
+
+      document.body.style.cursor = 'auto';
+    }
   }
-  
+
   renderer.render(scene, camera);
 }
 
