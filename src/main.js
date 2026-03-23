@@ -2,6 +2,8 @@ import "./style.css";
 import * as THREE from "three";
 import {OrbitControls} from "three/addons/controls/OrbitControls.js";
 import {TransformControls} from "three/addons/controls/TransformControls.js"
+import { gsap } from "gsap";
+
 
 const scene = new THREE.Scene();
 
@@ -15,13 +17,26 @@ document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
+controls.maxDistance = 8; 
+controls.minDistance = 1;
+
+const cameraTarget = new THREE.Vector3(0, 0, 0);
+
+controls.target = cameraTarget; 
+
+camera.position.z = 9; 
+camera.position.y = 1;
 
 const transformControls = new TransformControls(camera, renderer.domElement);
 
-scene.add(transformControls);
 scene.add(transformControls.getHelper());
 
-transformControls.addEventListener("dragging-changed", function(event) {controls.enabled = !event.value;});
+let estEnTrainDeGlisser = false;
+
+transformControls.addEventListener("dragging-changed", function(event) {
+  controls.enabled = !event.value;
+  estEnTrainDeGlisser = event.value;
+});
 
 
 const roomGeo = new THREE.BoxGeometry(10, 5, 10);
@@ -42,14 +57,15 @@ cabinetGroup.position.z = -4.5;
 const cabinetGeo = new THREE.BoxGeometry(3, 4, 1);
 const cabinetMat = new THREE.MeshBasicMaterial({color: 0xffaa00, wireframe: true});
 const cabinet = new THREE.Mesh(cabinetGeo, cabinetMat);
+cabinet.name = "armoireFinale";
 cabinetGroup.add(cabinet);
 
 const objGeo = new THREE.SphereGeometry(0.2, 8, 8);
-const objMat = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+const objMat = new THREE.MeshBasicMaterial({color: 0xff0000});
 
 for (let i = 0; i < 12; i++) {
   const obj = new THREE.Mesh(objGeo, objMat);
-
+  obj.name = "referenceFilm";
   obj.position.z = 0;
   obj.position.x = (Math.random() - 0.5) * 2.5;
   obj.position.y = (Math.random() - 0.5) * 3.5;
@@ -59,22 +75,102 @@ for (let i = 0; i < 12; i++) {
 
 scene.add(cabinetGroup);
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2(); 
 
-transformControls.attach(cabinetGroup.children[1]);
+window.addEventListener('click', (event) => {
+  if (estEnTrainDeGlisser) return;
+  
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+
+  const intersects = raycaster.intersectObjects(cabinetGroup.children);
+
+  const objetTrouve = intersects.find((touche) => touche.object.name === "referenceFilm");
+
+  if (objetTrouve) {
+  
+    const positionAbsolue = new THREE.Vector3();
+
+    objetTrouve.object.getWorldPosition(positionAbsolue);
+
+    gsap.to(controls.target, {
+      x: positionAbsolue.x,
+      y: positionAbsolue.y,
+      z: positionAbsolue.z,
+      duration: 1, 
+      ease: "power2.out" 
+    });
+
+    gsap.to(camera.position, {
+      x: positionAbsolue.x,
+      y: positionAbsolue.y,
+      z: positionAbsolue.z + 1.5, 
+      duration: 1.5,
+      ease: "power2.inOut"
+    });
+
+    //transformControls.attach(objetTrouve.object); 
+    
+  } else {
+    transformControls.detach();
+  }
+});
+
+
+const menuEcran = document.getElementById('menu-ecran');
+const boutonPlay = document.getElementById('bouton-play');
+
+
+boutonPlay.addEventListener('click', () => {
+  menuEcran.style.opacity = '0';
+  setTimeout(() => { menuEcran.style.display = 'none'; }, 1000);
+
+  cameraEnMouvement = true; 
+  controls.enabled = false;
+
+  gsap.to(camera.position, {
+    x: 0,
+    y: 0, 
+    z: -1, 
+    duration: 2.5,
+    ease: "power2.inOut",
+
+    onComplete: () => {
+      cameraEnMouvement = false; 
+      controls.enabled = true; 
+
+      controls.update(); 
+    }
+  });
+
+  gsap.to(controls.target, {
+    x: 0,
+    y: -0.5,
+    z: -4.5,
+    duration: 2.5,
+    ease: "power2.inOut"
+  });
+});
 
 
 
 
-
+let cameraEnMouvement = false;
 
 function animate(){
   requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
   
+  if (!cameraEnMouvement) {
+    controls.update();
+  }
+  
+  renderer.render(scene, camera);
 }
-animate()
 
+animate();
 
 
 window.addEventListener("resize", () => {

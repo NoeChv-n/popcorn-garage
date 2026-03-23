@@ -7,3 +7,35 @@ body {
 canvas {
   display : block;
 }
+
+
+#menu-ecran {
+  position: absolute; 
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8); 
+  z-index: 10; 
+  color: white;
+  font-family: sans-serif;
+  transition: opacity 1s ease; 
+}
+
+#bouton-play {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background-color: #ffaa00;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+#bouton-play:hover {
+  background-color: #ffcc00;
+}
