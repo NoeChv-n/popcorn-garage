@@ -39,3 +39,59 @@ canvas {
 #bouton-play:hover {
   background-color: #ffcc00;
 }
+
+/* --- STYLE DES MODALES DE JEU --- */
+.modal-jeu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 40px;
+  border: 2px solid #ffaa00;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 20; 
+  font-family: sans-serif;
+  min-width: 300px;
+}
+
+#input-reponse {
+  padding: 10px;
+  font-size: 1rem;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.modal-jeu button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: #ffaa00;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.modal-jeu button:hover { background-color: #ffcc00; }
+.btn-retour { background-color: #555 !important; }
+.btn-retour:hover { background-color: #777 !important; }
+
+
+#compteur-score {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #ffaa00; 
+  padding: 10px 20px;
+  border: 2px solid #ffaa00;
+  border-radius: 5px;
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  font-weight: bold;
+  z-index: 5;
+  display: none;
+}

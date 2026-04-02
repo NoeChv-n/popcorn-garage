@@ -12,6 +12,24 @@
       <h1>POPCORN GARAGE</h1>
       <button id="bouton-play">ENTRER DANS LE GARAGE</button>
     </div>
+
+    <div id="compteur-score">Trouvés : 0 / 13</div>
+
+    <div id="fenetre-question" class="modal-jeu" style="display: none;">
+      <h2>Quel est ce film ?</h2>
+      <input type="text" id="input-reponse" placeholder="Titre du film...">
+      <button id="btn-valider">Valider</button>
+      <p id="msg-erreur" style="display: none; color: #ff4444; margin-top: 10px;">Mauvaise réponse, essaie encore !</p>
+      <br><br>
+      <button class="btn-retour">Retour</button>
+    </div>
+
+    <div id="fenetre-info" class="modal-jeu" style="display: none;">
+      <h2 id="info-titre">Bravo !</h2>
+      <p id="info-desc">Explication du film ici...</p>
+      <button class="btn-retour">Retour au garage</button>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

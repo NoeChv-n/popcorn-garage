@@ -71,6 +71,12 @@ for (let i = 0; i < 12; i++) {
   const obj = new THREE.Mesh(objGeo, distinctMat);
   obj.name = "referenceFilm";
 
+  obj.userData = {
+    titreAttendu: "matrix",
+    description: "La pilule bleue ou la pilule rouge ? Un grand classique de la science-fiction réalisé par les Wachowski."
+  };
+
+
   obj.position.z = 0;
   obj.position.x = (Math.random() - 0.5) * 2.5;
   obj.position.y = (Math.random() - 0.5) * 3.5;
@@ -83,42 +89,132 @@ scene.add(cabinetGroup);
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2(); 
 
+// --- LOGIQUE DU QUIZ ET DES BOUTONS RETOUR ---
+
+const fenetreQuestion = document.getElementById('fenetre-question');
+const fenetreInfo = document.getElementById('fenetre-info');
+const inputReponse = document.getElementById('input-reponse');
+const btnValider = document.getElementById('btn-valider');
+const msgErreur = document.getElementById('msg-erreur');
+const boutonsRetour = document.querySelectorAll('.btn-retour');
+
+let objetEnCoursDExamen = null; 
+
+
+let scoreActuel = 0;
+const totalObjets = 13; 
+const elementScore = document.getElementById('compteur-score');
+
+function ajouterUnPoint() {
+  scoreActuel++;
+  elementScore.innerText = "Trouvés : " + scoreActuel + " / " + totalObjets;
+}
+
+
+btnValider.addEventListener('click', () => {
+  const reponseJoueur = inputReponse.value.toLowerCase().trim();
+  const reponseSecrete = objetEnCoursDExamen.userData.titreAttendu.toLowerCase();
+
+  if (reponseJoueur === reponseSecrete) {
+    ajouterUnPoint();
+    fenetreQuestion.style.display = 'none'; 
+    
+    
+    document.getElementById('info-titre').innerText = "Bravo ! C'était " + objetEnCoursDExamen.userData.titreAttendu.toUpperCase();
+    document.getElementById('info-desc').innerText = objetEnCoursDExamen.userData.description;
+    
+    fenetreInfo.style.display = 'block'; 
+    
+    
+    objetEnCoursDExamen.material.color.setHex(0x00ff00);
+    objetEnCoursDExamen.currentHex = 0x00ff00; 
+    objetEnCoursDExamen.name = "referenceTrouvee"; 
+
+  } else {
+    
+    msgErreur.style.display = 'block';
+  }
+});
+
+
+boutonsRetour.forEach(bouton => {
+  bouton.addEventListener('click', () => {
+    
+    fenetreQuestion.style.display = 'none';
+    fenetreInfo.style.display = 'none';
+    objetEnCoursDExamen = null;
+
+   
+    cameraEnMouvement = true;
+    controls.enabled = false;
+
+    gsap.to(camera.position, {
+      x: 0, y: 0, z: -1, 
+      duration: 1.5, ease: "power2.inOut",
+      onComplete: () => {
+        cameraEnMouvement = false;
+        controls.enabled = true;
+        controls.update();
+      }
+    });
+
+    gsap.to(controls.target, {
+      x: 0, y: -0.5, z: -4.5,
+      duration: 1.5, ease: "power2.inOut"
+    });
+  });
+});
+
 window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 });
 
+let jeuDemarre = false; 
+
 window.addEventListener('click', (event) => {
-  raycaster.setFromCamera(mouse, camera);
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  // --- LE CADENAS DE SÉCURITÉ ---
+  // Si on clique sur un bouton HTML, ou si la caméra bouge, ou si le jeu n'a pas commencé : ON ANNULE LE CLIC !
+  if (event.target.tagName !== 'CANVAS' || cameraEnMouvement || !jeuDemarre) return;
+  
   raycaster.setFromCamera(mouse, camera);
 
   const intersects = raycaster.intersectObjects(cabinetGroup.children);
   const objetTrouve = intersects.find((touche) => touche.object.name === "referenceFilm");
   const armoireTrouvee = intersects.find((touche) => touche.object.name === "armoireFinale");
 
+ 
   if (objetTrouve) {
+    controls.enabled = false; 
+    objetEnCoursDExamen = objetTrouve.object; 
+
     const positionAbsolue = new THREE.Vector3();
     objetTrouve.object.getWorldPosition(positionAbsolue);
+    
     gsap.to(controls.target, { x: positionAbsolue.x, y: positionAbsolue.y, z: positionAbsolue.z, duration: 1, ease: "power2.out" });
-    gsap.to(camera.position, { x: positionAbsolue.x, y: positionAbsolue.y, z: positionAbsolue.z + 1.5, duration: 1.5, ease: "power2.inOut" });
-  } 
-
+    gsap.to(camera.position, { 
+      x: positionAbsolue.x, y: positionAbsolue.y, z: positionAbsolue.z + 1.5, 
+      duration: 1.5, ease: "power2.inOut",
+      onComplete: () => {
+        
+        inputReponse.value = ''; 
+        msgErreur.style.display = 'none'; 
+        fenetreQuestion.style.display = 'block';
+      }
+    });
+  }
+  
   else if (armoireTrouvee) {
     const distanceCamera = camera.position.distanceTo(cabinetGroup.position);
-
+    
     if (distanceCamera > 6) {
       console.log("BRAVO ! Armoire trouvée.");
-
+      ajouterUnPoint();
       armoireTrouvee.object.material.color.setHex(0x00ff00);
-
       armoireTrouvee.object.name = "armoireTrouvee_Fini"; 
-    } else {
-
     }
   }
-});
+}); 
 
 
 const menuEcran = document.getElementById('menu-ecran');
@@ -128,6 +224,8 @@ const boutonPlay = document.getElementById('bouton-play');
 boutonPlay.addEventListener('click', () => {
   menuEcran.style.opacity = '0';
   setTimeout(() => { menuEcran.style.display = 'none'; }, 1000);
+
+  document.getElementById('compteur-score').style.display = 'block';
 
   cameraEnMouvement = true; 
   controls.enabled = false;
@@ -144,8 +242,11 @@ boutonPlay.addEventListener('click', () => {
       controls.enabled = true; 
 
       controls.update(); 
+  
+
+  jeuDemarre = true; 
     }
-  });
+});
 
   gsap.to(controls.target, {
     x: 0,
@@ -205,6 +306,8 @@ function animate() {
 
   renderer.render(scene, camera);
 }
+
+
 
 animate();
 
