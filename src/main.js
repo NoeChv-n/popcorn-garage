@@ -17,13 +17,16 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 camera.position.z = 9; 
 camera.position.y = 1;
 
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+// 1. On exige l'utilisation de la carte graphique haute performance pour les utilisateurs de laptops (si disponible)
+const renderer = new THREE.WebGLRenderer({ powerPreference: "high-performance" });
 
-// ==============================================================================
-// 2. CONTRÔLES DE LA CAMÉRA ET OUTILS
-// ==============================================================================
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+// 2. On bride la multiplication des pixels pour les écrans Retina
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1)); 
+
+renderer.shadowMap.enabled = true;
+document.body.appendChild(renderer.domElement);
 
 // ==============================================================================
 // 2. CONTRÔLES DE LA CAMÉRA ET OUTILS
@@ -32,23 +35,20 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enablePan = false; 
 
-// --- LES LIMITES DE LA CAMÉRA (Sur mesure pour le grenier !) ---
-controls.maxDistance = 7; // Assez de recul pour l'armoire
+// --- LES LIMITES DE LA CAMÉRA  ---
+controls.maxDistance = 7; 
 controls.minDistance = 1; 
 
 // 1. Limite Haut / Bas (Plancher et Toit)
 // Math.PI / 3 (soit 60 degrés) empêche la caméra de s'élever au-delà de Y=3. 
-// Comme le bord de ton toit est à Y=4, tu ne passeras plus jamais au travers !
 controls.minPolarAngle = Math.PI / 3; 
-controls.maxPolarAngle = (Math.PI / 2) - 0.05; // Butée contre le plancher
+controls.maxPolarAngle = (Math.PI / 2) - 0.05;
 
-// 2. Limite Gauche / Droite (Plus stricte pour contrer le grand angle !)
-// On passe à Math.PI / 8 (soit environ 22 degrés de chaque côté).
-// Ça laisse largement la place d'inspecter l'armoire, sans risquer de voir à travers les murs.
+// 2. Limite Gauche / Droite 
 controls.minAzimuthAngle = -Math.PI / 8; 
 controls.maxAzimuthAngle = Math.PI / 8;
 
-// 💡 NOUVEAU : Blocage de la rotation derrière l'armoire
+// Blocage de la rotation derrière l'armoire
 // 0 = face à l'armoire. On autorise 60 degrés de chaque côté (Math.PI / 3)
 controls.minAzimuthAngle = -Math.PI / 3; // Limite à gauche
 controls.maxAzimuthAngle = Math.PI / 3;  // Limite à droite
@@ -90,29 +90,29 @@ manager.onLoad = () => {
 // 4. CONSTRUCTION DE L'ENVIRONNEMENT (Les Combles de Narnia)
 // ==============================================================================
 
-const textureLoader = new THREE.TextureLoader(manager); // Connecté au manager
+const textureLoader = new THREE.TextureLoader(manager); 
 
-// --- TEXTURES DES MURS ET SOL ---
+// --- TEXTURES DES MURS ET SOL (Optimisées en JPG !) ---
 
-const texSol = textureLoader.load('/textures/plancher.png'); 
-const texSolAO = textureLoader.load('/textures/plancher_ao.png'); 
-const texSolNormal = textureLoader.load('/textures/plancher_normal.png'); 
-const texSolRoughness = textureLoader.load('/textures/plancher_roughness.png'); 
+const texSol = textureLoader.load('/textures/plancher.jpg'); 
+const texSolAO = textureLoader.load('/textures/plancher_ao.jpg'); 
+const texSolNormal = textureLoader.load('/textures/plancher_normal.jpg'); 
+const texSolRoughness = textureLoader.load('/textures/plancher_roughness.jpg'); 
 
-const texMurDroit = textureLoader.load('/textures/mur_droite.png');
-const texMurDroitao = textureLoader.load('/textures/mur_droite_ao.png');
-const texMurDroitnormal = textureLoader.load('/textures/mur_droite_normal.png');
-const texMurDroitroughness = textureLoader.load('/textures/mur_droite_roughness.png');
+const texMurDroit = textureLoader.load('/textures/mur_droite.jpg');
+const texMurDroitao = textureLoader.load('/textures/mur_droite_ao.jpg');
+const texMurDroitnormal = textureLoader.load('/textures/mur_droite_normal.jpg');
+const texMurDroitroughness = textureLoader.load('/textures/mur_droite_roughness.jpg');
 
-const texToit = textureLoader.load('/textures/mur_toit.png');
-const texToitAO = textureLoader.load('/textures/mur_toit_ao.png');
-const texToitNormal = textureLoader.load('/textures/mur_toit_normal.png');
-const texToitRoughness = textureLoader.load('/textures/mur_toit_roughness.png');
+const texToit = textureLoader.load('/textures/mur_toit.jpg');
+const texToitAO = textureLoader.load('/textures/mur_toit_ao.jpg');
+const texToitNormal = textureLoader.load('/textures/mur_toit_normal.jpg');
+const texToitRoughness = textureLoader.load('/textures/mur_toit_roughness.jpg');
 
-const texMurFond = textureLoader.load('/textures/mur_fond.png');
-const texMurFondAO = textureLoader.load('/textures/mur_fond_ao.png');
-const texMurFondNormal = textureLoader.load('/textures/mur_fond_normal.png');
-const texMurFondRoughness = textureLoader.load('/textures/mur_fond_roughness.png');
+const texMurFond = textureLoader.load('/textures/mur_fond.jpg');
+const texMurFondAO = textureLoader.load('/textures/mur_fond_ao.jpg');
+const texMurFondNormal = textureLoader.load('/textures/mur_fond_normal.jpg');
+const texMurFondRoughness = textureLoader.load('/textures/mur_fond_roughness.jpg');
 
 const listMapToRepeat = [texMurFond, texMurFondAO, texMurFondNormal, texMurFondRoughness];
 listMapToRepeat.forEach(map => {
@@ -121,10 +121,10 @@ listMapToRepeat.forEach(map => {
   map.repeat.set(0.2, 0.1); 
 });
 
-const texMurGauche = textureLoader.load('/textures/mur_gauche.png');
-const texMurGaucheAO = textureLoader.load('/textures/mur_gauche_ao.png');
-const texMurGaucheNormal = textureLoader.load('/textures/mur_gauche_normal.png');
-const texMurGaucheRoughness = textureLoader.load('/textures/mur_gauche_roughness.png');
+const texMurGauche = textureLoader.load('/textures/mur_gauche.jpg');
+const texMurGaucheAO = textureLoader.load('/textures/mur_gauche_ao.jpg');
+const texMurGaucheNormal = textureLoader.load('/textures/mur_gauche_normal.jpg');
+const texMurGaucheRoughness = textureLoader.load('/textures/mur_gauche_roughness.jpg');
 
 const listMapGaucheToRepeat = [texMurGauche, texMurGaucheAO, texMurGaucheNormal, texMurGaucheRoughness];
 listMapGaucheToRepeat.forEach(map => {
@@ -174,6 +174,7 @@ solGeo.setAttribute('uv2', new THREE.BufferAttribute(solGeo.attributes.uv.array,
 const sol = new THREE.Mesh(solGeo, solMat);
 sol.rotation.x = -Math.PI / 2; 
 sol.position.y = -2.5; 
+sol.receiveShadow = true;
 scene.add(sol);
 
 const murFondShape = new THREE.Shape();
@@ -231,11 +232,11 @@ scene.add(toitDroit);
 // 5. LE "FAUX CIEL" ET LA VITRE SALE (FENÊTRE)
 // ==============================================================================
 
-// 1. Le ciel texturé de fond (Teinte validée !)
+// 1. Le ciel texturé de fond 
 const texCiel = textureLoader.load('/textures/overcast_sky.jpg'); 
 const cielPlancheGeo = new THREE.PlaneGeometry(5, 5);
 const cielMat = new THREE.MeshBasicMaterial({ 
-  color: 0xd3d3d3, // Ta teinte de ciel
+  color: 0xd3d3d3, 
   map: texCiel, 
   side: THREE.DoubleSide 
 });
@@ -244,7 +245,7 @@ cielMesh.position.set(-5.5, 0, -3);
 cielMesh.rotation.y = Math.PI / 2; 
 scene.add(cielMesh);
 
-// 2. La crasse PBR (Paramètres validés !)
+// 2. La crasse PBR 
 const texVitreColor = textureLoader.load('/textures/Metal053B_1K-JPG_Color.jpg');
 const texVitreNormal = textureLoader.load('/textures/Metal053B_1K-JPG_NormalGL.jpg'); 
 const texVitreRoughness = textureLoader.load('/textures/Metal053B_1K-JPG_Roughness.jpg');
@@ -278,6 +279,18 @@ scene.add(lumiereAmbiante);
 
 const lumiereFenetre = new THREE.DirectionalLight(0xffddaa, 2.5); 
 lumiereFenetre.position.set(-10, 2, -3); 
+lumiereFenetre.castShadow = true;
+// Configuration précise des ombres
+lumiereFenetre.shadow.mapSize.width = 512; 
+lumiereFenetre.shadow.mapSize.height = 512;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+lumiereFenetre.shadow.bias = -0.001; // Évite les artefacts
+lumiereFenetre.shadow.camera.near = 0.5;
+lumiereFenetre.shadow.camera.far = 20;
+lumiereFenetre.shadow.camera.left = -10;
+lumiereFenetre.shadow.camera.right = 10;
+lumiereFenetre.shadow.camera.top = 10;
+lumiereFenetre.shadow.camera.bottom = -10;
 scene.add(lumiereFenetre);
 lumiereFenetre.target.position.set(0, -1, -4.5);
 scene.add(lumiereFenetre.target);
@@ -308,6 +321,46 @@ rayonMesh.position.set(-5, -0.5, -3);
 rayonMesh.scale.set(2, 1.5, 1.6);
 scene.add(rayonMesh);
 
+// ==============================================================================
+// SYSTÈME DE POUSSIÈRE FLOTTANTE (Nouvel Ajout !)
+// ==============================================================================
+
+// 1. Géométrie : Poussière concentrée près de la fenêtre
+const poussiereGeo = new THREE.BufferGeometry();
+const nbPoussieres = 300; // Beaucoup plus léger !
+const positions = new Float32Array(nbPoussieres * 3);
+const vitesses = new Float32Array(nbPoussieres); 
+
+for (let i = 0; i < nbPoussieres; i++) {
+  // 💡 On restreint la zone d'apparition (proche de la fenêtre)
+  positions[i * 3 + 0] = -5 + Math.random() * 5;  // X: de -5 (mur gauche) à 0 (centre)
+  positions[i * 3 + 1] = -2 + Math.random() * 4;  // Y: Hauteur moyenne
+  positions[i * 3 + 2] = -4 + Math.random() * 3;  // Z: Profondeur vers l'armoire
+  
+  vitesses[i] = Math.random() * 0.005; // Vitesse très lente
+}
+poussiereGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+// 2. Matériau : On utilise une texture de point (loaded procedurally or as a data URL)
+const chargeurPoussiereTex = new THREE.TextureLoader();
+// Tu peux utiliser une image 'textures/point.png' ou la générer en Canvas
+const texturePoint = chargeurPoussiereTex.load('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='); // Un simple point blanc généré
+
+const poussiereMat = new THREE.PointsMaterial({
+  color: 0xcccccc, 
+  map: texturePoint,
+  size: 0.020,     
+  transparent: true,
+  opacity: 0.35,   
+  blending: THREE.AdditiveBlending,
+  depthWrite: false,
+  sizeAttenuation: true 
+});
+
+// 3. Objet : Création du mesh Points
+const poussierePoints = new THREE.Points(poussiereGeo, poussiereMat);
+scene.add(poussierePoints);
+
 const cibleRayon = new THREE.Object3D();
 cibleRayon.position.set(5, -2.5, -2.7); 
 scene.add(cibleRayon);
@@ -318,10 +371,11 @@ rayonMesh.lookAt(cibleRayon.position);
 // ==============================================================================
 
 const cabinetGroup = new THREE.Group();
-cabinetGroup.position.set(0, -2.5, -4.5); 
+cabinetGroup.position.set(0, -2.5, -4.5);
+// Le groupe reçoit les ombres (très utile pour les étagères)
+cabinetGroup.receiveShadow = true; 
 scene.add(cabinetGroup);
 
-// 💡 LE CORRECTIF EST ICI : Configuration parfaite des chargeurs
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
 const gltfLoader = new GLTFLoader(manager); 
@@ -339,50 +393,104 @@ gltfLoader.load(
     };
     armoire.scale.set(5, 5, 5);
     armoire.position.set(0, 0, 0.5); 
+
+    // Activation des ombres sur le bois de l'armoire
+    armoire.traverse((enfant) => {
+      if (enfant.isMesh) {
+        enfant.castShadow = true;
+        enfant.receiveShadow = true;
+      }
+    });
+
     cabinetGroup.add(armoire);
   },
   undefined,
   (erreur) => console.error("Erreur armoire :", erreur)
 );
 
-// Base de données des objets
+// Base de données des objets 
 const listeObjets = [
   {
-    fichier: '/modeles/anneau.glb', titre: 'Le Seigneur des Anneaux', description: 'Un anneau pour les gouverner tous...',
-    pos: { x: -0.84, y: 2.68, z: 0 }, scale: 0.2, rot: { x: -0.00159, y: 2.5784, z: 0 }
+    fichier: '/modeles/anneau.glb', titre: 'Le Seigneur des Anneaux', description: 'Même la plus petite personne peut changer le cours de l’avenir',
+    pos: { x: -0.84, y: 2.05, z: 0 }, scale: 0.2, rot: { x: -0.00159, y: 2.5784, z: 0 }
   },
   {
-    fichier: '/modeles/arthur.glb', titre: 'Arthur et les Minimoys', description: 'Une aventure minuscule dans le jardin...',
+    fichier: '/modeles/arthur.glb', titre: 'Arthur et les Minimoys', description: 'Le courage n’a pas de taille. ',
     pos: { x: 0.56, y: 0.9, z: 0.58 }, scale: 1, rot: { x: -1.49159, y: -0.00159, z: 0.3484 }
   },
   {
-    fichier: '/modeles/avatar.glb', titre: 'Avatar', description: 'Bienvenue sur Pandora.',
+    fichier: '/modeles/avatar.glb', titre: 'Avatar', description: 'Comprendre un monde, c’est apprendre à en faire partie.',
     pos: { x: -0.05, y: 1.69, z: -0.09 }, scale: 1, rot: { x: 2.6584, y: 0.0284, z: 1.6184 }
   },
   {
-    fichier: '/modeles/harry_potter.glb', titre: 'Harry Potter', description: 'Un jeune sorcier qui découvre le monde magique...',
+    fichier: '/modeles/harry_potter.glb', titre: 'Harry Potter', description: 'Ce sont nos choix qui montrent ce que nous sommes vraiment.',
     pos: { x: 0.27, y: 2.05, z: 0 }, scale: 0.5, rot: { x: 0, y: -0.29159, z: 0 }
   },
   {
-    fichier: '/modeles/pan.glb', titre: 'Le labyrinthe de Pan', description: 'Un conte de fées sombre et fascinant...',
+    fichier: '/modeles/pan.glb', titre: 'Le labyrinthe de Pan', description: 'La magie n’existe pas pour ceux qui refusent d’y croire. ',
     pos: { x: -0.17, y: 2.68, z: 0 }, scale: 1, rot: { x: 0.1884, y: -0.45159, z: 0 }
   },
   {
-    fichier: '/modeles/gremlins.glb', titre: 'Gremlins', description: 'Des créatures maléfiques qui vivent dans les ombres...',
+    fichier: '/modeles/gremlins.glb', titre: 'Gremlins', description: 'Les règles les plus simples sont souvent celles qu’on regrette le plus de ne pas avoir respectées. ',
     pos: { x: 0.71, y: 2.05, z: 0 }, scale: 0.55, rot: { x: 0, y: -0.85159, z: 0 }
+  },
+  {
+    fichier: '/modeles/Dragon.glb', titre: 'Dragon', description: 'Tu n’as pas besoin de tuer pour être un héros.',
+    pos: { x: -0.29, y: 2.05, z: 0 }, scale: 1.07, rot: { x: 0, y: 0.3584, z: 0 }
+  },
+  {
+    fichier: '/modeles/Edward_aux_mains_dargent.glb', titre: 'Edward aux mains d\'argent', description: 'Les gens ont peur de ce qu’ils ne comprennent pas.',
+    pos: { x: 0.57, y: 2.68, z: 0.45 }, scale: 0.55, rot: { x: 0, y: -0.85159, z: 0 }
+  },
+  {
+    fichier: '/modeles/La_Belle_Et_La_bete.glb', titre: 'La Belle et la Bête', description: ' Il faut voir au-delà des apparences.',
+    pos: { x: 0.71, y: 1.44, z: 0 }, scale: 0.55, rot: { x: 0, y: -0.41159, z: 0 }
+  },
+  {
+    fichier: '/modeles/Malefique.glb', titre: 'Malefique', description: 'L’amour véritable n’existe pas.',
+    pos: { x: -0.6499, y: 2.68, z: 0.57 }, scale: 0.55, rot: { x: 0, y: 0.5884, z: 0 }
+  },
+  {
+    fichier: '/modeles/voyage_de_chihiro.glb', titre: 'Le voyage de Chihiro', description: 'Rien de ce qui arrive n’est jamais oublié, même si tu ne t’en souviens pas.',
+    pos: { x: -0.6499, y: 0.88, z: 0.33 }, scale: 0.45, rot: { x: 0, y: 0.0484, z: 0 }
+  },
+  {
+    fichier: '/modeles/Princesse_mononoke.glb', titre: 'Princesse Mononoké', description: 'Regarde avec des yeux sans haine.',
+    pos: { x: -0.04, y: 1.44, z: 0.33 }, scale: 0.45, rot: { x: 0, y: 0.0484, z: 0 }
+  },
+  {
+    fichier: '/modeles/KING_KONG.glb', titre: 'King Kong', description: 'La peur crée les monstres que l’on redoute.',
+    pos: { x: -0.16, y: 0.88, z: 0.57 }, scale: 0.45, rot: { x: 0, y: 0.3584, z: 0 }
   }
-];
+]; 
+
+// ==============================================================================
+// UNE SEULE BOUCLE POUR TOUT CHARGER 
+// ==============================================================================
 
 listeObjets.forEach((data) => {
   gltfLoader.load(
     data.fichier,
     (gltf) => {
       const modele = gltf.scene;
+      
+      // On rend l'objet interactif pour le quiz
       modele.name = "referenceFilm"; 
       modele.userData = { titreAttendu: data.titre, description: data.description };
+      
+      // Application des réglages millimétrés
       modele.position.set(data.pos.x, data.pos.y, data.pos.z);
       modele.scale.set(data.scale, data.scale, data.scale);
       modele.rotation.set(data.rot.x, data.rot.y, data.rot.z); 
+
+      // Activation des ombres
+      modele.traverse((enfant) => {
+        if (enfant.isMesh) {
+          enfant.castShadow = true;
+          enfant.receiveShadow = true;
+        }
+      });
+      
       cabinetGroup.add(modele);
     },
     undefined,
@@ -435,7 +543,7 @@ const elementScore = document.getElementById('compteur-score');
 
 let objetEnCoursDExamen = null; 
 let scoreActuel = 0;
-const totalObjets = 13; 
+const totalObjets = listeObjets.length + 1; 
 let jeuDemarre = false; 
 let cameraEnMouvement = false; 
 
@@ -481,9 +589,44 @@ boutonsRetour.forEach(bouton => {
   });
 });
 
+// 💡 OPTIMISATION : On sort le calcul de survol de la boucle d'animation
+function verifierSurvol() {
+  if (cameraEnMouvement || !jeuDemarre) return;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(cabinetGroup.children, true);
+
+  let validHoverTarget = intersects.length > 0 ? trouverObjetJeu(intersects[0].object, "referenceFilm") : null;
+  
+  if (!validHoverTarget && intersects.length > 0) {
+    const distanceCamera = camera.position.distanceTo(cabinetGroup.position);
+    if (distanceCamera > 6) {
+      validHoverTarget = trouverObjetJeu(intersects[0].object, "armoireFinale");
+    }
+  }
+
+  if (validHoverTarget) {
+    const nouvelObjet = validHoverTarget.object;
+    if (objetActuellementSurvole !== nouvelObjet) {
+      appliquerCouleur(objetActuellementSurvole, null); 
+      objetActuellementSurvole = nouvelObjet;
+      appliquerCouleur(objetActuellementSurvole, couleurHover); 
+      document.body.style.cursor = 'pointer'; 
+    }
+  } else {
+    if (objetActuellementSurvole) {
+      appliquerCouleur(objetActuellementSurvole, null);
+    }
+    objetActuellementSurvole = null;
+    document.body.style.cursor = 'auto'; 
+  }
+}
+
+// On ne lance le laser que quand la souris bouge !
 window.addEventListener('mousemove', (event) => {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  verifierSurvol(); 
 });
 
 window.addEventListener('click', (event) => {
@@ -535,6 +678,7 @@ document.getElementById('bouton-play').addEventListener('click', () => {
   const menuEcran = document.getElementById('menu-ecran');
   menuEcran.style.opacity = '0';
   setTimeout(() => { menuEcran.style.display = 'none'; }, 1000);
+  elementScore.innerText = "Trouvés : 0 / " + totalObjets;
   document.getElementById('compteur-score').style.display = 'block';
 
   cameraEnMouvement = true; 
@@ -563,33 +707,20 @@ function animate() {
 
   if (!cameraEnMouvement && jeuDemarre) {
     controls.update();
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(cabinetGroup.children, true);
 
-    let validHoverTarget = intersects.length > 0 ? trouverObjetJeu(intersects[0].object, "referenceFilm") : null;
-    
-    if (!validHoverTarget && intersects.length > 0) {
-      const distanceCamera = camera.position.distanceTo(cabinetGroup.position);
-      if (distanceCamera > 6) {
-        validHoverTarget = trouverObjetJeu(intersects[0].object, "armoireFinale");
+    // Animation de la Poussière (très légère)
+    const geometryPositions = poussiereGeo.attributes.position.array;
+    for (let i = 0; i < nbPoussieres; i++) {
+      geometryPositions[i * 3 + 1] -= vitesses[i]; 
+      geometryPositions[i * 3 + 0] += Math.random() * 0.002 - 0.001; 
+      geometryPositions[i * 3 + 2] += Math.random() * 0.002 - 0.001; 
+      
+      if (geometryPositions[i * 3 + 1] < -3) {
+        geometryPositions[i * 3 + 1] = 2;
+        geometryPositions[i * 3 + 0] = -5 + Math.random() * 5; 
       }
     }
-
-    if (validHoverTarget) {
-      const nouvelObjet = validHoverTarget.object;
-      if (objetActuellementSurvole !== nouvelObjet) {
-        appliquerCouleur(objetActuellementSurvole, null); 
-        objetActuellementSurvole = nouvelObjet;
-        appliquerCouleur(objetActuellementSurvole, couleurHover); 
-        document.body.style.cursor = 'pointer'; 
-      }
-    } else {
-      if (objetActuellementSurvole) {
-        appliquerCouleur(objetActuellementSurvole, null);
-      }
-      objetActuellementSurvole = null;
-      document.body.style.cursor = 'auto'; 
-    }
+    poussiereGeo.attributes.position.needsUpdate = true; 
   }
 
   renderer.render(scene, camera);
