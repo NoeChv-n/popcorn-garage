@@ -1,104 +1,213 @@
+/* ==========================================================================
+   1. IMPORTATION DES POLICES (Google Fonts)
+   Cinzel : Titres (Effet affiche de film fantastique)
+   Lora : Textes (Élégant et lisible)
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital@0;1&display=swap');
+
+/* ==========================================================================
+   2. RÉINITIALISATION ET BASE
+   ========================================================================== */
 body {
   margin: 0;
   overflow: hidden;
-  background-color: #000;
+  background-color: #050505;
+  color: #f4ede4;
+  font-family: 'Lora', serif;
+  user-select: none;
 }
 
 canvas {
-  display : block;
+  display: block;
 }
 
-
+/* ==========================================================================
+   3. ÉCRAN DE CHARGEMENT ET MENU PRINCIPAL
+   ========================================================================== */
 #menu-ecran {
-  position: absolute; 
+  position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  background: radial-gradient(circle, rgba(20,20,25,0.85) 0%, rgba(5,5,5,1) 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.8); 
-  z-index: 10; 
-  color: white;
-  font-family: sans-serif;
-  transition: opacity 1s ease; 
+  z-index: 100;
+  transition: opacity 1s ease-in-out;
 }
 
-#bouton-play {
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  background-color: #ffaa00;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
+#menu-ecran h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 4rem;
+  color: #d4af37; /* Or vieilli */
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+  margin-bottom: 20px;
+  letter-spacing: 5px;
+  text-align: center;
 }
 
-#bouton-play:hover {
-  background-color: #ffcc00;
+#ecran-chargement {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  color: #e0d8c8;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+  animation: pulse 2s infinite;
 }
 
-/* --- STYLE DES MODALES DE JEU --- */
+/* ==========================================================================
+   4. LES MODALES DE JEU
+   ========================================================================== */
 .modal-jeu {
   position: absolute;
-  top: 50%;
+  bottom: 25%; /* Déplacé en bas pour ne pas cacher l'objet 3D */
   left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.9);
-  color: white;
-  padding: 40px;
-  border: 2px solid #ffaa00;
-  border-radius: 10px;
+  transform: translateX(-50%);
+  
+  /* L'effet Verre Dépoli Magique */
+  background: rgba(15, 15, 20, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8), 
+              inset 0 0 20px rgba(212, 175, 55, 0.1);
+  
+  padding: 30px 40px;
   text-align: center;
-  z-index: 20; 
-  font-family: sans-serif;
-  min-width: 300px;
+  z-index: 50;
+  width: 90%;
+  max-width: 500px;
+  display: none;
+}
+
+.modal-jeu h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.8rem;
+  color: #d4af37;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+}
+
+.modal-jeu p, #info-desc {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin-bottom: 25px;
+  color: #e0d8c8;
 }
 
 #input-reponse {
-  padding: 10px;
-  font-size: 1rem;
-  margin-right: 10px;
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 5px;
-  border: none;
+  color: #fff;
+  font-family: 'Lora', serif;
+  font-size: 1.1rem;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.modal-jeu button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  cursor: pointer;
-  background-color: #ffaa00;
+#input-reponse:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+/* ==========================================================================
+   5. BOUTONS (Play, Valider, Retour)
+   ========================================================================== */
+#bouton-play, .modal-jeu button {
+  background: linear-gradient(135deg, #d4af37 0%, #aa801e 100%);
+  color: #111;
   border: none;
-  border-radius: 5px;
+  padding: 12px 30px;
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
   font-weight: bold;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  letter-spacing: 1px;
 }
 
-.modal-jeu button:hover { background-color: #ffcc00; }
-.btn-retour { background-color: #555 !important; }
-.btn-retour:hover { background-color: #777 !important; }
+#bouton-play:hover, .modal-jeu button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+  background: linear-gradient(135deg, #ebd076 0%, #c4992b 100%);
+}
 
+#bouton-play:active, .modal-jeu button:active {
+  transform: translateY(1px);
+}
 
+.btn-retour {
+  background: transparent !important;
+  color: #b0b0b0 !important;
+  box-shadow: none !important;
+  border: 1px solid #b0b0b0 !important;
+  margin-top: 15px;
+  font-size: 0.9rem !important;
+  padding: 8px 20px !important;
+}
+
+.btn-retour:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+/* ==========================================================================
+   6. COMPTEUR DE SCORE ET ERREURS
+   ========================================================================== */
 #compteur-score {
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #ffaa00; 
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: #d4af37;
   padding: 10px 20px;
-  border: 2px solid #ffaa00;
-  border-radius: 5px;
-  font-family: sans-serif;
+  border-radius: 20px;
+  font-family: 'Cinzel', serif;
   font-size: 1.2rem;
   font-weight: bold;
-  z-index: 5;
+  z-index: 50;
   display: none;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
-#ecran-chargement {
-  color: white;
-  font-family: sans-serif;
-  text-align: center;
-  margin-bottom: 20px;
+#msg-erreur {
+  color: #ff5555;
+  font-size: 0.95rem;
+  font-style: italic;
+  margin-bottom: 15px;
+  display: none;
+  animation: shake 0.4s;
+}
+
+/* ==========================================================================
+   7. ANIMATIONS CLÉS
+   ========================================================================== */
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; text-shadow: 0 0 15px rgba(224, 216, 200, 0.5); }
+  100% { opacity: 0.5; }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
 }
