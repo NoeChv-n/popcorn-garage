@@ -387,31 +387,31 @@ const gltfLoader = new GLTFLoader(manager);
 gltfLoader.setDRACOLoader(dracoLoader);
 
 // Chargement de l'armoire
-// gltfLoader.load(
-//   '/modeles/armoire.glb', 
-//   (gltf) => {
-//     const armoire = gltf.scene;
-//     armoire.name = "armoireFinale";
-//     armoire.userData = {
-//       titreAttendu: "narnia",
-//       description: "Le Monde de Narnia. Une simple porte vers un univers magique et glacé..."
-//     };
-//     armoire.scale.set(5, 5, 5);
-//     armoire.position.set(0, 0, 0.5); 
+gltfLoader.load(
+  '/modeles/armoire.glb', 
+  (gltf) => {
+    const armoire = gltf.scene;
+    armoire.name = "armoireFinale";
+    armoire.userData = {
+      titreAttendu: "narnia",
+      description: "Le Monde de Narnia. Une simple porte vers un univers magique et glacé..."
+    };
+    armoire.scale.set(5, 5, 5);
+    armoire.position.set(0, 0, 0.5); 
 
-//     // Activation des ombres sur le bois de l'armoire
-//     armoire.traverse((enfant) => {
-//       if (enfant.isMesh) {
-//         enfant.castShadow = true;
-//         enfant.receiveShadow = true;
-//       }
-//     });
+    // Activation des ombres sur le bois de l'armoire
+    armoire.traverse((enfant) => {
+      if (enfant.isMesh) {
+        enfant.castShadow = true;
+        enfant.receiveShadow = true;
+      }
+    });
 
-//     cabinetGroup.add(armoire);
-//   },
-//   undefined,
-//   (erreur) => console.error("Erreur armoire :", erreur)
-// );
+    cabinetGroup.add(armoire);
+  },
+  undefined,
+  (erreur) => console.error("Erreur armoire :", erreur)
+);
 
 // Base de données des objets 
 const listeObjets = [
