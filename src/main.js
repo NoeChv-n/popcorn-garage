@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import GUI from "lil-gui";
+import Stats from "stats.js";
 
 // ==============================================================================
 // 1. CONFIGURATION DE BASE
@@ -27,6 +28,10 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
+
+var stats = new Stats();
+stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );
 
 // ==============================================================================
 // 2. CONTRÔLES DE LA CAMÉRA ET OUTILS
@@ -322,7 +327,7 @@ rayonMesh.scale.set(2, 1.5, 1.6);
 scene.add(rayonMesh);
 
 // ==============================================================================
-// SYSTÈME DE POUSSIÈRE FLOTTANTE (Nouvel Ajout !)
+// SYSTÈME DE POUSSIÈRE FLOTTANTE 
 // ==============================================================================
 
 // 1. Géométrie : Poussière concentrée près de la fenêtre
@@ -373,7 +378,7 @@ rayonMesh.lookAt(cibleRayon.position);
 const cabinetGroup = new THREE.Group();
 cabinetGroup.position.set(0, -2.5, -4.5);
 // Le groupe reçoit les ombres (très utile pour les étagères)
-cabinetGroup.receiveShadow = true; 
+// cabinetGroup.receiveShadow = true; 
 scene.add(cabinetGroup);
 
 const dracoLoader = new DRACOLoader();
@@ -382,31 +387,31 @@ const gltfLoader = new GLTFLoader(manager);
 gltfLoader.setDRACOLoader(dracoLoader);
 
 // Chargement de l'armoire
-gltfLoader.load(
-  '/modeles/armoire.glb', 
-  (gltf) => {
-    const armoire = gltf.scene;
-    armoire.name = "armoireFinale";
-    armoire.userData = {
-      titreAttendu: "narnia",
-      description: "Le Monde de Narnia. Une simple porte vers un univers magique et glacé..."
-    };
-    armoire.scale.set(5, 5, 5);
-    armoire.position.set(0, 0, 0.5); 
+// gltfLoader.load(
+//   '/modeles/armoire.glb', 
+//   (gltf) => {
+//     const armoire = gltf.scene;
+//     armoire.name = "armoireFinale";
+//     armoire.userData = {
+//       titreAttendu: "narnia",
+//       description: "Le Monde de Narnia. Une simple porte vers un univers magique et glacé..."
+//     };
+//     armoire.scale.set(5, 5, 5);
+//     armoire.position.set(0, 0, 0.5); 
 
-    // Activation des ombres sur le bois de l'armoire
-    armoire.traverse((enfant) => {
-      if (enfant.isMesh) {
-        enfant.castShadow = true;
-        enfant.receiveShadow = true;
-      }
-    });
+//     // Activation des ombres sur le bois de l'armoire
+//     armoire.traverse((enfant) => {
+//       if (enfant.isMesh) {
+//         enfant.castShadow = true;
+//         enfant.receiveShadow = true;
+//       }
+//     });
 
-    cabinetGroup.add(armoire);
-  },
-  undefined,
-  (erreur) => console.error("Erreur armoire :", erreur)
-);
+//     cabinetGroup.add(armoire);
+//   },
+//   undefined,
+//   (erreur) => console.error("Erreur armoire :", erreur)
+// );
 
 // Base de données des objets 
 const listeObjets = [
@@ -465,7 +470,7 @@ const listeObjets = [
 ]; 
 
 // ==============================================================================
-// UNE SEULE BOUCLE POUR TOUT CHARGER 
+// LA BOUCLE POUR TOUT CHARGER 
 // ==============================================================================
 
 listeObjets.forEach((data) => {
@@ -703,7 +708,14 @@ let objetActuellementSurvole = null;
 const couleurHover = 0x00aaff;
 
 function animate() {
-  requestAnimationFrame(animate);
+
+  stats.begin();
+
+  console.log("Renderer calls: " + renderer.info.render.calls);
+  console.log("Triangles rendered: " + renderer.info.render.triangles);
+  console.log("Geometries in memory: " + renderer.info.memory.geometries);
+  console.log("Textures in memory: " + renderer.info.memory.textures);
+
 
   if (!cameraEnMouvement && jeuDemarre) {
     controls.update();
@@ -723,8 +735,14 @@ function animate() {
     poussiereGeo.attributes.position.needsUpdate = true; 
   }
 
+
   renderer.render(scene, camera);
+
+  stats.end();
+
+  requestAnimationFrame(animate);
 }
+
 
 animate();
 
