@@ -211,3 +211,57 @@ canvas {
   75% { transform: translateX(-5px); }
   100% { transform: translateX(0); }
 }
+
+/* ==========================================================================
+   8. ÉCRAN DE VICTOIRE
+   ========================================================================== */
+#ecran-victoire {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  /* Un léger voile sombre avec un cœur doré */
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, rgba(5,5,5,0.95) 100%);
+  display: none; /* Masqué au début, géré par le JS */
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0; /* À 0 pour permettre une apparition en fondu */
+}
+
+#ecran-victoire h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 5rem;
+  color: #d4af37;
+  text-shadow: 0 0 40px rgba(212, 175, 55, 0.8);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+#ecran-victoire p {
+  font-size: 1.5rem;
+  color: #e0d8c8;
+  margin-bottom: 40px;
+  text-shadow: 0 2px 10px rgba(0,0,0,1);
+}
+
+#bouton-rejouer {
+  background: linear-gradient(135deg, #d4af37 0%, #aa801e 100%);
+  color: #111;
+  border: none;
+  padding: 15px 40px;
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: bold;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#bouton-rejouer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+}

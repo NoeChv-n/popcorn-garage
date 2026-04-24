@@ -555,6 +555,33 @@ let cameraEnMouvement = false;
 function ajouterUnPoint() {
   scoreActuel++;
   elementScore.innerText = "Trouvés : " + scoreActuel + " / " + totalObjets;
+
+  // 💡 VÉRIFICATION : Est-ce qu'on a tout trouvé ?
+  if (scoreActuel === totalObjets) {
+    declencherVictoire();
+  }
+}
+
+// 💡 LA SÉQUENCE DE FIN DE JEU
+function declencherVictoire() {
+  jeuDemarre = false; // Bloque les clics du joueur
+  controls.enabled = false; // Bloque la caméra
+  document.getElementById('compteur-score').style.display = 'none'; // Cache le score
+
+  // 1. La caméra recule lentement pour admirer le grenier
+  gsap.to(camera.position, { x: 0, y: 0, z: 2, duration: 4, ease: "power2.inOut" });
+  gsap.to(controls.target, { x: 0, y: -0.5, z: -4.5, duration: 4, ease: "power2.inOut" });
+
+  // 2. Baisse spectaculaire des lumières (Ambiance dramatique)
+  gsap.to(lumiereAmbiante, { intensity: 0.1, duration: 3 });
+  gsap.to(lumiereFenetre, { intensity: 0.8, duration: 3 });
+
+  // 3. Apparition du panneau de victoire (après 2 secondes de suspense)
+  setTimeout(() => {
+    const ecranVictoire = document.getElementById('ecran-victoire');
+    ecranVictoire.style.display = 'flex';
+    gsap.to(ecranVictoire, { opacity: 1, duration: 2 }); // Fondu doux grâce à GSAP
+  }, 2000);
 }
 
 btnValider.addEventListener('click', () => {
