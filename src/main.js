@@ -5,8 +5,7 @@ import { TransformControls } from "three/addons/controls/TransformControls.js";
 import { gsap } from "gsap";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import GUI from "lil-gui";
-import Stats from "stats.js";
+
 
 // ==============================================================================
 // 1. CONFIGURATION DE BASE
@@ -29,9 +28,6 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1));
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
-var stats = new Stats();
-stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
-document.body.appendChild( stats.dom );
 
 // ==============================================================================
 // 2. CONTRÔLES DE LA CAMÉRA ET OUTILS
@@ -170,7 +166,7 @@ const murGaucheMat = new THREE.MeshStandardMaterial({
   roughnessMap: texMurGaucheRoughness, roughness: 1.39, side: THREE.DoubleSide 
 }); 
 
-const gui = new GUI(); 
+
 
 // --- ASSEMBLAGE DE LA PIÈCE ---
 
@@ -381,6 +377,7 @@ cabinetGroup.position.set(0, -2.5, -4.5);
 // cabinetGroup.receiveShadow = true; 
 scene.add(cabinetGroup);
 
+
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
 const gltfLoader = new GLTFLoader(manager); 
@@ -417,60 +414,60 @@ gltfLoader.load(
 const listeObjets = [
   {
     fichier: '/modeles/anneau.glb', titre: 'Le Seigneur des Anneaux', description: 'Même la plus petite personne peut changer le cours de l’avenir',
-    pos: { x: -0.84, y: 2.05, z: 0 }, scale: 0.2, rot: { x: -0.00159, y: 2.5784, z: 0 }
+    pos: { x: -0.84, y: 2.17, z: 0.23 }, scale: 0.17, rot: { x: -0.00159, y: 2.5784, z: 0 }
   },
   {
     fichier: '/modeles/arthur.glb', titre: 'Arthur et les Minimoys', description: 'Le courage n’a pas de taille. ',
-    pos: { x: 0.56, y: 0.9, z: 0.58 }, scale: 1, rot: { x: -1.49159, y: -0.00159, z: 0.3484 }
+    pos: { x: 0.75, y: 1, z: 0.08 }, scale: 1, rot: { x: 1.7484, y: -0.02159, z: -0.25159 }
   },
   {
     fichier: '/modeles/avatar.glb', titre: 'Avatar', description: 'Comprendre un monde, c’est apprendre à en faire partie.',
-    pos: { x: -0.05, y: 1.69, z: -0.09 }, scale: 1, rot: { x: 2.6584, y: 0.0284, z: 1.6184 }
+    pos: { x: -0.98, y: 1.69, z: -0.02 }, scale: 1, rot: { x: 2.28840, y: -0.02159, z: -1.57159 }
   },
   {
     fichier: '/modeles/harry_potter.glb', titre: 'Harry Potter', description: 'Ce sont nos choix qui montrent ce que nous sommes vraiment.',
-    pos: { x: 0.27, y: 2.05, z: 0 }, scale: 0.5, rot: { x: 0, y: -0.29159, z: 0 }
+    pos: { x: 0.27, y: 2.17, z: 0.33 }, scale: 0.5, rot: { x: 0, y: -0.29159, z: 0 }
   },
   {
     fichier: '/modeles/pan.glb', titre: 'Le labyrinthe de Pan', description: 'La magie n’existe pas pour ceux qui refusent d’y croire. ',
-    pos: { x: -0.17, y: 2.68, z: 0 }, scale: 1, rot: { x: 0.1884, y: -0.45159, z: 0 }
+    pos: { x: -0.17, y: 2.77, z: 0 }, scale: 0.83, rot: { x: 0.2084, y: -0.02159, z: 0 }
   },
   {
     fichier: '/modeles/gremlins.glb', titre: 'Gremlins', description: 'Les règles les plus simples sont souvent celles qu’on regrette le plus de ne pas avoir respectées. ',
-    pos: { x: 0.71, y: 2.05, z: 0 }, scale: 0.55, rot: { x: 0, y: -0.85159, z: 0 }
+    pos: { x: 0.71, y: 2.17, z: 0 }, scale: 0.55, rot: { x: 0, y: -0.85159, z: 0 }
   },
   {
     fichier: '/modeles/Dragon.glb', titre: 'Dragon', description: 'Tu n’as pas besoin de tuer pour être un héros.',
-    pos: { x: -0.29, y: 2.05, z: 0 }, scale: 1.07, rot: { x: 0, y: 0.3584, z: 0 }
+    pos: { x: -0.29, y: 2.17, z: 0.23 }, scale: 0.83, rot: { x: 0, y: 0.3584, z: 0 }
   },
   {
     fichier: '/modeles/Edward_aux_mains_dargent.glb', titre: 'Edward aux mains d\'argent', description: 'Les gens ont peur de ce qu’ils ne comprennent pas.',
-    pos: { x: 0.57, y: 2.68, z: 0.45 }, scale: 0.55, rot: { x: 0, y: -0.85159, z: 0 }
+    pos: { x: 0.57, y: 2.77, z: 0.18 }, scale: 0.55, rot: { x: 0, y: -0.85159, z: 0 }
   },
   {
     fichier: '/modeles/La_Belle_Et_La_bete.glb', titre: 'La Belle et la Bête', description: ' Il faut voir au-delà des apparences.',
-    pos: { x: 0.71, y: 1.44, z: 0 }, scale: 0.55, rot: { x: 0, y: -0.41159, z: 0 }
+    pos: { x: 0.71, y: 1.49, z: 0.08 }, scale: 0.55, rot: { x: 0, y: -0.41159, z: 0 }
   },
   {
     fichier: '/modeles/Malefique.glb', titre: 'Malefique', description: 'L’amour véritable n’existe pas.',
-    pos: { x: -0.6499, y: 2.68, z: 0.57 }, scale: 0.55, rot: { x: 0, y: 0.5884, z: 0 }
+    pos: { x: -0.6499, y: 2.77, z: 0.38 }, scale: 0.55, rot: { x: 0, y: 0.5884, z: 0 }
   },
   {
     fichier: '/modeles/voyage_de_chihiro.glb', titre: 'Le voyage de Chihiro', description: 'Rien de ce qui arrive n’est jamais oublié, même si tu ne t’en souviens pas.',
-    pos: { x: -0.6499, y: 0.88, z: 0.33 }, scale: 0.45, rot: { x: 0, y: 0.0484, z: 0 }
+    pos: { x: -0.6499, y: 0.95, z: 0.23 }, scale: 0.43, rot: { x: 0, y: 0.0484, z: 0 }
   },
   {
     fichier: '/modeles/Princesse_mononoke.glb', titre: 'Princesse Mononoké', description: 'Regarde avec des yeux sans haine.',
-    pos: { x: -0.04, y: 1.44, z: 0.33 }, scale: 0.45, rot: { x: 0, y: 0.0484, z: 0 }
+    pos: { x: -0.04, y: 1.49, z: 0.33 }, scale: 0.43, rot: { x: 0, y: 0.0484, z: 0 }
   },
   {
     fichier: '/modeles/KING_KONG.glb', titre: 'King Kong', description: 'La peur crée les monstres que l’on redoute.',
-    pos: { x: -0.16, y: 0.88, z: 0.57 }, scale: 0.45, rot: { x: 0, y: 0.3584, z: 0 }
+    pos: { x: -0.16, y: 0.95, z: 0.28 }, scale: 0.43, rot: { x: 0, y: 0.3584, z: 0 }
   }
-]; 
+];
 
 // ==============================================================================
-// LA BOUCLE POUR TOUT CHARGER 
+// UNE SEULE BOUCLE POUR TOUT CHARGER 
 // ==============================================================================
 
 listeObjets.forEach((data) => {
@@ -483,7 +480,7 @@ listeObjets.forEach((data) => {
       modele.name = "referenceFilm"; 
       modele.userData = { titreAttendu: data.titre, description: data.description };
       
-      // Application des réglages millimétrés
+      // Application des réglages actuels
       modele.position.set(data.pos.x, data.pos.y, data.pos.z);
       modele.scale.set(data.scale, data.scale, data.scale);
       modele.rotation.set(data.rot.x, data.rot.y, data.rot.z); 
@@ -502,7 +499,6 @@ listeObjets.forEach((data) => {
     (erreur) => console.error(`Erreur sur l'objet ${data.titre} :`, erreur)
   );
 });
-
 // ==============================================================================
 // 8. FONCTIONS OUTILS (Raycaster & Couleurs)
 // ==============================================================================
@@ -532,6 +528,25 @@ function appliquerCouleur(objet, couleurHex) {
 }
 
 // ==============================================================================
+// 8.5. DESIGN SONORE
+// ==============================================================================
+const sonAmbiance = new Audio('/audio/vent.mp3');
+sonAmbiance.loop = true;
+sonAmbiance.volume = 0.3; // On le garde discret
+
+const sonSelection = new Audio('/audio/selection.mp3');
+sonSelection.volume = 0.4;
+
+const sonSucces = new Audio('/audio/succes.mp3');
+sonSucces.volume = 0.6;
+
+const sonErreur = new Audio('/audio/erreur.mp3');
+sonErreur.volume = 0.5;
+
+const sonVictoire = new Audio('/audio/victoire.mp3');
+sonVictoire.volume = 0.8;
+
+// ==============================================================================
 // 9. SYSTÈME DE JEU (Logique, UI, Clics)
 // ==============================================================================
 
@@ -559,6 +574,8 @@ function ajouterUnPoint() {
   // 💡 VÉRIFICATION : Est-ce qu'on a tout trouvé ?
   if (scoreActuel === totalObjets) {
     declencherVictoire();
+    sonAmbiance.pause(); // On coupe le vent
+    sonVictoire.play(); //
   }
 }
 
@@ -589,6 +606,8 @@ btnValider.addEventListener('click', () => {
   const reponseSecrete = objetEnCoursDExamen.userData.titreAttendu.toLowerCase();
 
   if (reponseJoueur === reponseSecrete) {
+    sonSucces.currentTime = 0;
+    sonSucces.play();
     ajouterUnPoint();
     fenetreQuestion.style.display = 'none'; 
     document.getElementById('info-titre').innerText = "Bravo ! C'était " + objetEnCoursDExamen.userData.titreAttendu.toUpperCase();
@@ -597,6 +616,8 @@ btnValider.addEventListener('click', () => {
     appliquerCouleur(objetEnCoursDExamen, 0x00ff00); 
     objetEnCoursDExamen.name = "referenceTrouvee"; 
   } else {
+    sonErreur.currentTime = 0;
+    sonErreur.play();
     msgErreur.style.display = 'block';
   }
 });
@@ -671,6 +692,8 @@ window.addEventListener('click', (event) => {
   const armoireTrouvee = intersects.length > 0 ? trouverObjetJeu(intersects[0].object, "armoireFinale") : null;
 
   if (objetTrouve) {
+    sonSelection.currentTime = 0;
+    sonSelection.play();
     controls.enabled = false; 
     cameraEnMouvement = true; 
     objetEnCoursDExamen = objetTrouve.object;
@@ -707,6 +730,7 @@ window.addEventListener('click', (event) => {
 }); 
 
 document.getElementById('bouton-play').addEventListener('click', () => {
+  sonAmbiance.play(); 
   const menuEcran = document.getElementById('menu-ecran');
   menuEcran.style.opacity = '0';
   setTimeout(() => { menuEcran.style.display = 'none'; }, 1000);
@@ -736,7 +760,6 @@ const couleurHover = 0x00aaff;
 
 function animate() {
 
-  stats.begin();
 
   console.log("Renderer calls: " + renderer.info.render.calls);
   console.log("Triangles rendered: " + renderer.info.render.triangles);
@@ -765,7 +788,6 @@ function animate() {
 
   renderer.render(scene, camera);
 
-  stats.end();
 
   requestAnimationFrame(animate);
 }
