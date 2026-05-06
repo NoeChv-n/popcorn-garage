@@ -2,7 +2,7 @@
 
 ![Popcorn Garage 3D](https://img.shields.io/badge/Statut-Termin%C3%A9-success) ![Three.js](https://img.shields.io/badge/Three.js-WebGL-black?logo=three.js) ![Déploiement](https://img.shields.io/badge/Déployé_sur-Netlify-00C7B7?logo=netlify)
 
-**Lien vers le jeu en ligne :** [Insère ici ton lien Netlify]
+**Lien vers le jeu en ligne :** https://popcorngarage.netlify.app
 
 ## 📖 À propos du projet
 
@@ -24,10 +24,10 @@ Le joueur est plongé dans un décor immersif représentant le célèbre grenier
 
 Ce projet a été réalisé en équipe de 4 personnes :
 
-*   **[Ton Prénom/Nom] :** Développement WebGL (Three.js), animations (GSAP), design sonore et intégration générale de la scène.
-*   **Hafsa :** Modélisation 3D, texturing et conception des objets (Blender & outils de génération 3D).
-*   **Douglas :** Gestion de la base de données, recherche des œuvres, des visuels et curation des citations emblématiques.
-*   **Aaron :** Optimisation des modèles 3D (réduction polygonale et allègement des assets pour le web).
+*   **Noé Chauvin :** Développement WebGL (Three.js), animations (GSAP), design sonore et intégration générale de la scène.
+*   **Hafsa Aboulfaid :** Modélisation 3D, texturing et conception des objets (Blender & outils de génération 3D).
+*   **Douglas Quintero :** Gestion de la base de données, recherche des œuvres, des visuels et curation des citations emblématiques.
+*   **Aaron Boti :** Optimisation des modèles 3D (réduction polygonale et allègement des assets pour le web).
 
 ## 🛠️ Technologies utilisées
 
