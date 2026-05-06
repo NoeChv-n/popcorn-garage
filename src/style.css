@@ -265,3 +265,25 @@ canvas {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
 }
+
+.poster-container {
+  width: 100%;
+  max-width: 220px;    /* Largeur fixe pour l'équilibre visuel */
+  height: 320px;       /* Hauteur fixe pour éviter que le texte ne bouge */
+  margin: 0 auto 20px; /* Centre le conteneur et ajoute de l'espace en bas */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.5); /* Rappel du style doré */
+  overflow: hidden;
+}
+
+#info-poster {
+  width: 100%;
+  height: 100%;
+  /* GARANTIT QUE L'IMAGE N'EST JAMAIS DÉFORMÉE */
+  object-fit: contain; 
+  display: none; /* Masqué tant que l'image n'est pas chargée */
+}

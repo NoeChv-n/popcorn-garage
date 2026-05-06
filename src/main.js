@@ -5,6 +5,7 @@ import { TransformControls } from "three/addons/controls/TransformControls.js";
 import { gsap } from "gsap";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { getMoviePoster } from './api.js';
 
 
 // ==============================================================================
@@ -606,13 +607,30 @@ btnValider.addEventListener('click', () => {
   const reponseSecrete = objetEnCoursDExamen.userData.titreAttendu.toLowerCase();
 
   if (reponseJoueur === reponseSecrete) {
+    // 1. Lancement de l'appel API
+    getMoviePoster(objetEnCoursDExamen.userData.titreAttendu).then(url => {
+      const imgElement = document.getElementById('info-poster');
+      if (url && imgElement) {
+        imgElement.src = url;
+        imgElement.style.display = 'block';
+        gsap.fromTo(imgElement, { opacity: 0 }, { opacity: 1, duration: 0.8 });
+      }
+    });
+
+    // 2. Mise à jour de l'interface
+    document.getElementById('info-titre').innerText = "Bravo ! C'était " + objetEnCoursDExamen.userData.titreAttendu.toUpperCase();
+    document.getElementById('info-desc').innerText = objetEnCoursDExamen.userData.description;
+    
+    // 3. Logique de jeu et sons
     sonSucces.currentTime = 0;
     sonSucces.play();
     ajouterUnPoint();
+    
+    // 4. Transition des fenêtres
     fenetreQuestion.style.display = 'none'; 
-    document.getElementById('info-titre').innerText = "Bravo ! C'était " + objetEnCoursDExamen.userData.titreAttendu.toUpperCase();
-    document.getElementById('info-desc').innerText = objetEnCoursDExamen.userData.description;
     fenetreInfo.style.display = 'block'; 
+    
+    // 5. Feedback visuel sur l'objet 3D
     appliquerCouleur(objetEnCoursDExamen, 0x00ff00); 
     objetEnCoursDExamen.name = "referenceTrouvee"; 
   } else {
